@@ -1,6 +1,4 @@
-# recomlive-docker
-Recom.live — the real-time recommendation system
-
+# Recom.live — the real-time recommendation system
 ## tl;dr
 Install and run Recom.live server:
 ```
