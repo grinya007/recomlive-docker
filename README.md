@@ -29,7 +29,7 @@ real    5m23.854s
 user    0m29.936s
 sys     0m47.922s
 ```
-By the way, on MacBook Pro 2014 Recom.live mills 600 vizits per second
+By the way, on MacBook Pro 2014 Recom.live mills 600 visits per second
 
 Client usage example:
 ```
@@ -53,3 +53,9 @@ cd ../recomlive-docker
 make stop
 make clean
 ```
+
+## What it's all about?
+Recom.live is the real-time shallow-learning unsupervised item-based collaborative filtering recommendation system. It takes advantage of ARC algorithm to keep up the actual state of visitors interest, TFIDF-alike statistic to align visitors and documents importance and Cosine similarity measure to come up with recommendations.
+
+## What problem does it solve?
+Let's assume you have a news website, where recommendations block below articles is driven by the smart batch-model recommendation system. Whenever another training iteration is finished, fresh recommendations bring you superior CTR. But how long does it take to collect another batch, sufficient for training? What recommendations would you show underneath a breaking news article, which is facing views spike if it happens to be published in 10 minutes before the next training iteration is finished? Such a situation, where good recommendations for breaking news arrive too late, is quite common. Just imagine how many page views and engaged readers your website loses. To smooth it out usual practice is to populate recommendations block with links to the most popular articles while proper recommendations are on their way. This solution is better than nothing. But if the described situation is to some extent relevant to what you have—you must give a try to Recom.live! Its intention is to fill that gap before a smarter but unhurried recommendation system kicks in.
