@@ -2,11 +2,10 @@
 This docker image is based upon [debian:stretch-slim](https://github.com/debuerreotype/docker-debian-artifacts/blob/064f343bfa6ebf043aac2bbd4c870256cfe82f5a/stretch/slim/Dockerfile), [python3](https://packages.debian.org/stretch/python3) and [Recom.live core](https://github.com/grinya007/recomlive)
 ## Quick installation guide
 Install and run [Recom.live server](https://github.com/grinya007/recomlive):
+Before "make"-ing you might want to edit the [.env file](https://github.com/grinya007/recomlive-docker/blob/master/.env). It contains a few settings that are explained in the comments inside of the file
 ```
 git clone https://github.com/grinya007/recomlive-docker.git
 cd recomlive-docker
-# before "make"-ing you might want to edit the .env file
-# it contains a few settings that are explained in the comments inside of the file
 make
 make start
 ```
