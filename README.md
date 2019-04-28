@@ -1,15 +1,17 @@
 # Recom.live — the real-time recommendation system
 This docker image is based upon [debian:stretch-slim](https://github.com/debuerreotype/docker-debian-artifacts/blob/064f343bfa6ebf043aac2bbd4c870256cfe82f5a/stretch/slim/Dockerfile), [python3](https://packages.debian.org/stretch/python3) and [Recom.live core](https://github.com/grinya007/recomlive)
-## tl;dr
-Install and run Recom.live server:
+## Quick installation guide
+Install and run [Recom.live server](https://github.com/grinya007/recomlive):
 ```
 git clone https://github.com/grinya007/recomlive-docker.git
 cd recomlive-docker
+# before "make"-ing you might want to edit the .env file
+# it contains a few settings that are explained in the comments inside of the file
 make
 make start
 ```
 
-Ckeck out Recom.live client:
+Ckeck out [Recom.live client](https://github.com/grinya007/recomlive-client):
 ```
 cd ..
 git clone https://github.com/grinya007/recomlive-client.git
@@ -18,7 +20,8 @@ cd recomlive-client
 
 Run evaluation script:
 ```
-time zcat data/document_person.csv.gz | ./evaluate.py
+# assuming, you're running server on the same machine and you haven't changed the default port number
+time zcat data/document_person.csv.gz | ./evaluate.py localhost:5005
 Total visits:    200000
 Tries to guess:  40486
 Guesses:         8219
@@ -27,15 +30,24 @@ CTR:             20.30%
 real    5m23.854s
 user    0m29.936s
 sys     0m47.922s
+# by the way, on MacBook Pro 2014 Recom.live mills 600 visits per second
 ```
-By the way, on MacBook Pro 2014 Recom.live mills 600 visits per second
 
 Client usage example:
 ```
 python3
 >>> from recommender import Client
+
+# it would make sense to preserve a Client instance as a singleton
+# throughout your web application lifecycle
 >>> c = Client('localhost', 5005)
+
+# now you can start pouring pairs of document_id, person_id
+# into Recom.live server on every visit of your website
+# and receive recommendations
 >>> c.record_recommend('d1', 'p1')
+[]
+>>> c.record_recommend('d2', 'p1')
 []
 >>> c.record_recommend('d1', 'p2')
 []
@@ -43,6 +55,18 @@ python3
 []
 >>> c.record_recommend('d2', 'p3')
 ['d1']
+>>> c.record('d2', 'p4')
+10 # the return value of socket.sendto() method
+>>> c.recommend('d2', 'p4')
+['d1']
+>>> c.person_history('p2')
+['d1', 'd2']
+
+# please keep in mind that all document_ids that get to recommender server
+# have a chance to be recommended, although, it's unlikely that you would
+# ever want to show homepage or some other non-article pages in recommendations,
+# you can either filter such pages from Recom.live's output, or just never
+# record visits to these pages
 >>> quit()
 ```
 
@@ -52,9 +76,3 @@ cd ../recomlive-docker
 make stop
 make clean
 ```
-
-## What it's all about?
-Recom.live is the real-time shallow-learning unsupervised item-based collaborative filtering recommendation system. It takes advantage of ARC algorithm to keep up the actual state of visitors interest, TFIDF-alike statistic to align visitors and documents importance and Cosine similarity measure to come up with recommendations.
-
-## What problem does it solve?
-Let's assume you have a news website, where recommendations block below articles is driven by the smart batch-model recommendation system. Whenever another training iteration is finished, fresh recommendations bring you a superior CTR. But how long does it take to collect another batch, sufficient for training? What recommendations would you show underneath a breaking news article, which is facing views spike if it happens to be published in 10 minutes before the next training iteration is finished? Such a situation, where good recommendations for breaking news arrive too late, is quite common. Just imagine how many page views and engaged readers your website loses. To smooth it out usual practice is to populate recommendations block with links to the most popular articles while proper recommendations are on their way. This solution is better than nothing. But if the described situation is to some extent relevant to what you have—you must give a try to Recom.live! Its intention is to fill that gap before a smarter but unhurried recommendation system kicks in.
